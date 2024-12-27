@@ -27,10 +27,6 @@ properties([
 
 pipeline {
     agent any
-    // parameters {
-    //     choice(name: 'BRANCH_NAME', choices: ['master', 'dev', 'feature'], description: 'Choose branch name')
-    //     choice(name: 'TAG_NAME', choices: ['1.0.0', '1.0.1', '1.0.2'], description: 'Choose tag name')
-    // }
     stages {
         stage('Print parameters') {
             steps {
