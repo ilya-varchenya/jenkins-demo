@@ -34,8 +34,8 @@ pipeline {
     stages {
         stage('Print parameters') {
             steps {
-                echo "Branch was chosen: ${params.BRANCH_NAME}"
-                echo "Tag was chosen: ${params.TAG_NAME}"
+                echo "Branch was chosen: ${params.branch_name}"
+                echo "Tag was chosen: ${params.tag_name}"
             }
         }
     }
