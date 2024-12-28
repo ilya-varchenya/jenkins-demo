@@ -15,7 +15,12 @@ proc.waitFor()
 def branches = proc.in.text.readLines().collect { it.split()[1].replace('refs/heads/', '') }
 return branches
 '''
-          ] 
+          ],
+          fallbackScript: [
+            sandbox: false, 
+            script: 
+              'return[\'Could not get branches from GIT\']'
+          ], 
         ]
     ],
     [
@@ -35,7 +40,12 @@ proc.waitFor()
 def tags = proc.in.text.readLines().findAll { it.contains(branch_name) }.collect { it.split()[1].replace('refs/tags/', '') }
 return tags.isEmpty() ? ["No tags for chosen branch"] : tags
 '''
-          ]
+          ],
+          fallbackScript: [
+            sandbox: false, 
+            script: 
+              'return[\'Could not get tags from branch\']'
+          ], 
         ]
     ]
   ])
