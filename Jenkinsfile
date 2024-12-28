@@ -23,7 +23,7 @@ properties([
       choiceType: 'PT_SINGLE_SELECT',
       name: 'tag_name',
       referencedParameters: 'branch_name',
-      script: [
+      script: [$class: 'GroovyScript',
           classpath: [], 
             sandbox: false, 
             script: '''
