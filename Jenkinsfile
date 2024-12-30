@@ -36,7 +36,7 @@ return branches
             script: '''
 def cloneRepository(String repoUrl, String destinationPath, String branchName) {
     try {
-        // Chech if repo already was clonned
+        // Check if repo already was cloned
         def destDir = new File(destinationPath)
         if (destDir.exists()) {
             throw new IllegalArgumentException("Destination path already exists: ${destinationPath}")
@@ -47,7 +47,6 @@ def cloneRepository(String repoUrl, String destinationPath, String branchName) {
         if (exitCode != 0) {
             throw new RuntimeException("Git clone failed with exit code ${exitCode}: ${output}")
         }
-        println "Repository cloned successfully to: ${destinationPath}"
     } catch (Exception e) {
         println "Error: ${e.message}"
     }
@@ -55,7 +54,7 @@ def cloneRepository(String repoUrl, String destinationPath, String branchName) {
 
 def getTagsFromBranch(String repoPath, String branchName) {
     try {
-        // Chech if dir exists
+        // Check if dir exists
         def gitDir = new File(repoPath)
         if (!gitDir.exists()) {
             throw new IllegalArgumentException("Repository path does not exist: ${repoPath}")
@@ -74,7 +73,7 @@ def getTagsFromBranch(String repoPath, String branchName) {
         if (exitCode != 0) {
             throw new RuntimeException("Git command failed with exit code ${exitCode}: ${output}")
         }
-        return output ? output.split("\n") : []
+        return output.tokenize("\n")
     } catch (Exception e) {
         println "Error: ${e.message}"
         return []
@@ -88,6 +87,7 @@ cloneRepository(repo, destinationPath, branchName)
 
 def tags = getTagsFromBranch(destinationPath, branchName)
 
+// cleanup
 "rm -rf ${destinationPath}".execute()
 return tags
 '''
