@@ -34,18 +34,63 @@ return branches
           script: [
             sandbox: false,
             script: '''
-if (!branch_name) return ["Please, choose a branch"]
-def branchCommit = "git ls-remote --heads https://github.com/ilya-varchenya/jenkins-demo refs/heads/${branch_name}".execute().text.trim().split()[0]
-def tagsOutput = "git ls-remote --tags https://github.com/ilya-varchenya/jenkins-demo".execute().text
-
-def matchingTags = tagsOutput.readLines().findAll { line ->
-    def tagCommit = line.split()[0]
-  	def procOutput = "git merge-base --is-ancestor ${tagCommit} ${branchCommit}".execute().waitFor()
-	  procOutput == 0
-}.collect { line ->
-    line.split()[1].replaceAll('refs/tags/', '')
+def cloneRepository(String repoUrl, String destinationPath, String branchName) {
+    try {
+        // Chech if repo already was clonned
+        def destDir = new File(destinationPath)
+        if (destDir.exists()) {
+            throw new IllegalArgumentException("Destination path already exists: ${destinationPath}")
+        }
+	    def process = "git clone --single-branch --branch ${branchName} ${repoUrl} ${destinationPath}".execute()
+        def output = process.inputStream.text.trim()
+        def exitCode = process.waitFor()
+        if (exitCode != 0) {
+            throw new RuntimeException("Git clone failed with exit code ${exitCode}: ${output}")
+        }
+        println "Repository cloned successfully to: ${destinationPath}"
+    } catch (Exception e) {
+        println "Error: ${e.message}"
+    }
 }
-return matchingTags
+
+def getTagsFromBranch(String repoPath, String branchName) {
+    try {
+        // Chech if dir exists
+        def gitDir = new File(repoPath)
+        if (!gitDir.exists()) {
+            throw new IllegalArgumentException("Repository path does not exist: ${repoPath}")
+        }
+        if (!new File(gitDir, ".git").exists()) {
+            throw new IllegalArgumentException("No .git directory found in path: ${repoPath}")
+        }
+      
+        def command = ["git", "tag", "--merged", branchName]
+        def process = new ProcessBuilder(command)
+            .directory(gitDir)
+            .redirectErrorStream(true)
+            .start()
+        def output = process.inputStream.text.trim()
+        def exitCode = process.waitFor()
+        if (exitCode != 0) {
+            throw new RuntimeException("Git command failed with exit code ${exitCode}: ${output}")
+        }
+        return output ? output.split("\n") : []
+    } catch (Exception e) {
+        println "Error: ${e.message}"
+        return []
+    }
+}
+
+def branchName = 'master'
+def repo = 'https://github.com/ilya-varchenya/jenkins-demo'
+def destinationPath = "/var/jenkins_home/demo"
+
+cloneRepository(repo, destinationPath, branchName)
+
+def tags = getTagsFromBranch(destinationPath, branchName)
+
+"rm -rf ${destinationPath}".execute()
+return tags
 '''
           ],
           fallbackScript: [
