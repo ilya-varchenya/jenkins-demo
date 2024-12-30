@@ -3,7 +3,7 @@ properties([
     [
       $class: 'ChoiceParameter',
       choiceType: 'PT_SINGLE_SELECT',
-      name: 'branch_name',
+      name: 'branchName',
       script: 
         [
           $class: 'GroovyScript', 
@@ -27,7 +27,7 @@ return branches
       $class: 'CascadeChoiceParameter',
       choiceType: 'PT_SINGLE_SELECT',
       name: 'tag_name',
-      referencedParameters: 'branch_name',
+      referencedParameters: 'branchName',
       script:
         [
           $class: 'GroovyScript',
@@ -81,7 +81,6 @@ def getTagsFromBranch(String repoPath, String branchName) {
     }
 }
 
-def branchName = 'master'
 def repo = 'https://github.com/ilya-varchenya/jenkins-demo'
 def destinationPath = "/var/jenkins_home/demo"
 
@@ -108,7 +107,7 @@ pipeline {
   stages {
     stage('Print parameters') {
       steps {
-        echo "Branch was chosen: ${params.branch_name}"
+        echo "Branch was chosen: ${params.branchName}"
         echo "Tag was chosen: ${params.tag_name}"
       }
     }
