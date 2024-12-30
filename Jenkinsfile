@@ -4,24 +4,10 @@ properties([
       $class: 'ChoiceParameter',
       choiceType: 'PT_SINGLE_SELECT',
       name: 'branchName',
-      script: 
-        [
-          $class: 'GroovyScript', 
-          script: [
-            sandbox: false,
-            script: '''
-def proc = "git ls-remote --heads https://github.com/ilya-varchenya/jenkins-demo".execute()
-proc.waitFor()
-def branches = proc.in.text.readLines().collect { it.split()[1].replace('refs/heads/', '') }
-return branches
-'''
-          ],
-          fallbackScript: [
-            sandbox: false, 
-            script: 
-              'return[\'Could not get branches from GIT\']'
-          ], 
-        ]
+      script: [
+        $class: 'ScriptlerScript',
+        scriptlerScriptId:'BranchName.groovy'
+      ]
     ],
     [
       $class: 'CascadeChoiceParameter',
