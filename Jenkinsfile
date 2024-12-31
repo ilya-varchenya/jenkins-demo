@@ -88,7 +88,7 @@ def tags = getTagsFromBranch(destinationPath, branchName)
 
 // cleanup
 "rm -rf ${destinationPath}".execute()
-return branchName
+return [branchName]
 '''
           ],
           fallbackScript: [
