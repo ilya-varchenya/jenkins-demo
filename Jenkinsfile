@@ -82,10 +82,10 @@ def getTagsFromBranch(String repoPath, String branchName) {
 
 def repo = 'https://github.com/ilya-varchenya/jenkins-demo'
 def destinationPath = "/var/jenkins_home/demo"
+def branch_name = "dev"
+cloneRepository(repo, destinationPath, branch_name)
 
-cloneRepository(repo, destinationPath, branchName)
-
-def tags = getTagsFromBranch(destinationPath, branchName)
+def tags = getTagsFromBranch(destinationPath, branch_name)
 
 // cleanup
 "rm -rf ${destinationPath}".execute()
@@ -95,7 +95,7 @@ return tags
           fallbackScript: [
             sandbox: false, 
             script: 
-              'return[\'Could not get tags from branch\']'
+              'return[\'Could not get tags from branch ${branchName}\']'
           ], 
         ]
     ]
