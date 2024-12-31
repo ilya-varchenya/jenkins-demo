@@ -34,61 +34,18 @@ return branches
           script: [
             sandbox: false,
             script: '''
-def cloneRepository(String repoUrl, String destinationPath, String branchName) {
-  try {
-    // Check if repo already was cloned
-    def destDir = new File(destinationPath)
-    if (destDir.exists()) {
-      throw new IllegalArgumentException("Destination path already exists: ${destinationPath}")
-    }
-    def process = "git clone --single-branch --branch ${branchName} ${repoUrl} ${destinationPath}".execute()
-    def output = process.inputStream.text.trim()
-    def exitCode = process.waitFor()
-    if (exitCode != 0) {
-      throw new RuntimeException("Git clone failed with exit code ${exitCode}: ${output}")
-    }
-  } catch (Exception e) {
-    println "Error: ${e.message}"
-  }
-}
-
-def getTagsFromBranch(String repoPath, String branchName) {
-  try {
-    // Check if dir exists
-    def gitDir = new File(repoPath)
-    if (!gitDir.exists()) {
-      throw new IllegalArgumentException("Repository path does not exist: ${repoPath}")
-    }
-    if (!new File(gitDir, ".git").exists()) {
-      throw new IllegalArgumentException("No .git directory found in path: ${repoPath}")
-    }
-
-    def command = ["git", "tag", "--merged", branchName]
-    def process = new ProcessBuilder(command)
-      .directory(gitDir)
-      .redirectErrorStream(true)
-      .start()
-    def output = process.inputStream.text.trim()
-    def exitCode = process.waitFor()
-    if (exitCode != 0) {
-      throw new RuntimeException("Git command failed with exit code ${exitCode}: ${output}")
-    }
-    return output.tokenize("\n")
-  } catch (Exception e) {
-    println "Error: ${e.message}"
-    return []
-  }
-}
-
+def branchName = 'master'
 def repo = 'https://github.com/ilya-varchenya/jenkins-demo'
 def destinationPath = "/var/jenkins_home/demo"
-cloneRepository(repo, destinationPath, branchName)
 
-def tags = getTagsFromBranch(destinationPath, branchName)
+"git clone --single-branch --branch ${branchName} ${repo} ${destinationPath}".execute().waitFor()
 
-// cleanup
+def command = ["git", "tag", "--merged", branchName]
+def gitDir = new File(destinationPath)
+def process = new ProcessBuilder(command).directory(gitDir).start()
+def tags = process.inputStream.text.trim().tokenize("\n")
 "rm -rf ${destinationPath}".execute()
-return [branchName]
+return tags
 '''
           ],
           fallbackScript: [
