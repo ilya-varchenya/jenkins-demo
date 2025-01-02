@@ -39,13 +39,12 @@ def repo = 'https://github.com/ilya-varchenya/jenkins-demo'
 def destinationPath = "/var/jenkins_home/demo"
 
 "git clone --single-branch --branch ${branchName} ${repo} ${destinationPath}".execute().waitFor()
-return ["ls -la ${destinationPath}".execute().text.tokenize("\n")]
-// def command = ["git", "tag", "--merged", branchName]
-// def gitDir = new File(destinationPath)
-// def process = new ProcessBuilder(command).directory(gitDir).start()
-// def tags = process.inputStream.text.trim().tokenize("\n")
-// "rm -rf ${destinationPath}".execute()
-// return tags
+def command = ["git", "tag", "--merged", branchName]
+def gitDir = new File(destinationPath)
+def process = new ProcessBuilder(command).directory(gitDir).start()
+def tags = process.inputStream.text.trim().tokenize("\n")
+"rm -rf ${destinationPath}".execute()
+return tags
 '''
           ],
           fallbackScript: [
