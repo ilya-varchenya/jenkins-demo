@@ -6,7 +6,7 @@ pipeline {
   stages {
     stage('Example') {
       steps {
-        echo "Branch was chosen: ${params.BRANCH_TAG}"
+        echo "Tag was chosen: ${params.TAG}"
       }
     }
   }
