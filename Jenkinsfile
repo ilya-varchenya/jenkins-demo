@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-    gitParameter branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH_TAG', type: 'PT_BRANCH_TAG'
+        gitParameter name: 'TAG', type: 'PT_TAG', defaultValue: ' '
   }
   stages {
     stage('Example') {
