@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-        gitParameter name: 'TAG', type: 'PT_TAG', defaultValue: ' '
+        gitParameter name: 'TAG', type: 'PT_TAG', defaultValue: 'Can\'t retrieve tags', useRepository: 'https://github.com/ilya-varchenya/test_repo'
   }
   stages {
     stage('Example') {
@@ -13,7 +13,7 @@ pipeline {
                           extensions: [],
                           gitTool: 'Default',
                           submoduleCfg: [],
-                          userRemoteConfigs: [[url: 'https://github.com/ilya-varchenya/jenkins-demo']]
+                          userRemoteConfigs: [[url: 'https://github.com/ilya-varchenya/test_repo']]
                         ])
       }
     }
